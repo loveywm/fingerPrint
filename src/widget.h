@@ -23,11 +23,23 @@ class Widget : public QWidget
 public:
     explicit Widget(QWidget *parent = 0);
     ~Widget();
+    //add
+    void setPicLabel(QLabel *,QLabel *,QLabel *,QLabel *,QLabel *,QLabel *,QLabel *);
+    void run();
 
 private:
     Ui::Widget *ui;
     QString filename,filename1,filename2;
     ProThread *mainProThread,*matchThread1,*matchThread2;
+
+    //add
+    bool genPic;
+    QString bmpfilename;
+    const static int defaultSetSize=1200;
+    double radius;
+    QLabel *originLabel,*directionLabel,*maskLabel,*enhanceLabel,*binarizeLabel,*thinningLabel,*minutiaLabel;
+    FvsMinutiaSet_t minutiaSet;
+
 private slots:
     void openFile();
     void processImage();

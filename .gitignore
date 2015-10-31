@@ -10,3 +10,6 @@
 *.lai
 *.la
 *.a
+
+
+/build-FingerPrint-Qt_4_8_6_mingw482_32-Debug

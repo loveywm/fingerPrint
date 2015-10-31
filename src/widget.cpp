@@ -58,9 +58,17 @@ void Widget::processImage() {
         QMessageBox::information(NULL, "Error", "Please select a bmp file!");
         return;
     }
-    mainProThread = new ProThread(filename, true, 4.0);
-    mainProThread->setPicLabel(ui->label_origin, ui->label_direction, ui->label_mask, ui->label_enhance, ui->label_binarize, ui->label_thinning, ui->label_minutia);
-    mainProThread->start();
+
+    //mainProThread = new ProThread(filename, true, 4.0);
+    bmpfilename = filename;
+    genPic = true;
+    radius = 4.0;
+
+    //mainProThread->setPicLabel(ui->label_origin, ui->label_direction, ui->label_mask, ui->label_enhance, ui->label_binarize, ui->label_thinning, ui->label_minutia);
+    this->setPicLabel(ui->label_origin, ui->label_direction, ui->label_mask, ui->label_enhance, ui->label_binarize, ui->label_thinning, ui->label_minutia);
+
+    //mainProThread->start();
+    this->run();
 }
 
 ProThread::ProThread(QString file, bool gen = false, double r = 4.0) {
@@ -160,5 +168,101 @@ void ProThread::run() {
         minutiaLabel->setPixmap(tempPic);
     }
     //QMessageBox::information(NULL,"Done","Complete!");
+}
+
+
+
+void Widget::setPicLabel(QLabel *ori, QLabel *direc, QLabel *mas, QLabel *enhan, QLabel *bin, QLabel *thin, QLabel *minu) {
+    originLabel = ori;
+    directionLabel = direc;
+    maskLabel = mas;
+    enhanceLabel = enhan;
+    binarizeLabel = bin;
+    thinningLabel = thin;
+    minutiaLabel = minu;
+}
+
+void Widget::run() {
+    QPixmap tempPic;
+    QString tname;
+    FvsImage_t mask;
+    FvsImage_t image;
+    FvsImage_t directionimage;
+    FvsMinutiaSet_t minutia = minutiaSet;
+    FvsFloatField_t direction;
+    FvsFloatField_t frequency;
+    FvsByte_t bmfh[14];
+    BITMAPINFOHEADER bmih;
+    RGBQUAD rgbq[256];
+    char *orifilename = bmpfilename.toLatin1().data();
+    char *fname;
+    mask = ImageCreate();
+    image = ImageCreate();
+    directionimage = ImageCreate();
+    direction = FloatFieldCreate();
+    frequency = FloatFieldCreate();
+    if(FvsOK != FvsImageImport(image, orifilename, bmfh, &bmih, rgbq)) {
+        QMessageBox::information(NULL, "Error", "BMP file error!");
+        return;
+    }
+    tempPic.load(orifilename);
+    originLabel->setPixmap(tempPic);
+    FvsInt_t w  = ImageGetWidth (image);
+    FvsInt_t h  = ImageGetHeight(image);
+    ImageSetSize(directionimage, w, h);
+    ImageSoftenMean(image, 3);
+    ImageNormalize(image, 100, 10000);
+    FingerprintGetDirection(image, direction, 7, 8);
+    FingerprintGetFrequency1(image, direction, frequency);
+    FingerprintGetMask(image, direction, frequency, mask);
+    ImageEnhanceGabor(image, direction, frequency, mask, radius);
+    OverlayDirection(directionimage, direction);
+    //saving file....
+    if(genPic) {
+        tname = bmpfilename + "_dir.bmp";
+        fname = tname.toLatin1().data();
+        FvsImageExport(directionimage, fname, bmfh, &bmih, rgbq);
+        tempPic.load(fname);
+        directionLabel->setPixmap(tempPic);
+        tname = bmpfilename + "_mask.bmp";
+        fname = tname.toLatin1().data();
+        FvsImageExport(mask, fname, bmfh, &bmih, rgbq);
+        tempPic.load(fname);
+        maskLabel->setPixmap(tempPic);
+        tname = bmpfilename + "_enh.bmp";
+        fname = tname.toLatin1().data();
+        FvsImageExport(image, fname, bmfh, &bmih, rgbq);
+        tempPic.load(fname);
+        enhanceLabel->setPixmap(tempPic);
+    }
+    ImageBinarize(image, (FvsByte_t)0x80);
+    if(genPic) {
+        tname = bmpfilename + "_bin.bmp";
+        fname = tname.toLatin1().data();
+        FvsImageExport(image, fname, bmfh, &bmih, rgbq);
+        tempPic.load(fname);
+        binarizeLabel->setPixmap(tempPic);
+    }
+    ImageThinHitMiss(image);
+    if(genPic) {
+        tname = bmpfilename + "_thin.bmp";
+        fname = tname.toLatin1().data();
+        FvsImageExport(image, fname, bmfh, &bmih, rgbq);
+        tempPic.load(fname);
+        thinningLabel->setPixmap(tempPic);
+    }
+    /*
+    MinutiaSetExtract(minutia, image, direction, mask);
+    if(genPic) {
+        ImageClear(image);
+        MinutiaSetDraw(minutia, image);
+        tname = bmpfilename + "_minu.bmp";
+        fname = tname.toLatin1().data();
+        FvsImageExport(image, fname, bmfh, &bmih, rgbq);
+        tempPic.load(fname);
+        minutiaLabel->setPixmap(tempPic);
+    }
+    */
+    QMessageBox::information(NULL,"Done","Complete!");
 }
 

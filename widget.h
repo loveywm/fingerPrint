@@ -8,7 +8,7 @@
 #include <QMessageBox>
 #include <QPixmap>
 
-#include "fvs.h"
+#include "./inc/fvs.h"
 
 class ProThread;
 

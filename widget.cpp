@@ -60,6 +60,7 @@ void Widget::processImage() {
     }
 
     //mainProThread = new ProThread(filename, true, 4.0);
+    minutiaSet = MinutiaSetCreate(defaultSetSize);
     bmpfilename = filename;
     genPic = true;
     radius = 4.0;
@@ -251,7 +252,7 @@ void Widget::run() {
         tempPic.load(fname);
         thinningLabel->setPixmap(tempPic);
     }
-    /*
+
     MinutiaSetExtract(minutia, image, direction, mask);
     if(genPic) {
         ImageClear(image);
@@ -262,7 +263,7 @@ void Widget::run() {
         tempPic.load(fname);
         minutiaLabel->setPixmap(tempPic);
     }
-    */
-    QMessageBox::information(NULL,"Done","Complete!");
+
+    //QMessageBox::information(NULL,"Done","Complete!");
 }
 

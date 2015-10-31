@@ -99,7 +99,8 @@ FvsMinutia_t* MinutiaSetGetBuffer(FvsMinutiaSet_t min) {
   * 参数：minutia      细节点集合
   * 返回：错误编号
 ******************************************************************************/
-FvsError_t MinutiaSetEmpty(FvsMinutiaSet_t min) {
+FvsError_t MinutiaSetEmpty(FvsMinutiaSet_t min)
+{
     iFvsMinutiaSet_t* minutia = (iFvsMinutiaSet_t*)min;
     FvsError_t nRet = FvsOK;
     if (minutia != NULL)
@@ -121,17 +122,20 @@ FvsError_t MinutiaSetEmpty(FvsMinutiaSet_t min) {
 ******************************************************************************/
 FvsError_t MinutiaSetAdd(FvsMinutiaSet_t min,
                          const FvsFloat_t x, const FvsFloat_t y,
-                         const FvsMinutiaType_t type, const FvsFloat_t angle) {
+                         const FvsMinutiaType_t type, const FvsFloat_t angle)
+{
     iFvsMinutiaSet_t* minutia = (iFvsMinutiaSet_t*)min;
     FvsError_t nRet = FvsOK;
-    if (minutia->nbminutia < minutia->tablesize) {
+    if (minutia->nbminutia < minutia->tablesize)
+    {
         minutia->ptable[minutia->nbminutia].x       = x;
         minutia->ptable[minutia->nbminutia].y       = y;
         minutia->ptable[minutia->nbminutia].type    = type;
         minutia->ptable[minutia->nbminutia].angle   = angle;
         minutia->nbminutia++;
     }
-    else {
+    else
+    {
         /* 表中无空间 */
         nRet = FvsMemory;
         fprintf(stdout, "no space!\n");
@@ -259,7 +263,8 @@ FvsError_t MinutiaSetExtract
     const FvsImage_t      image,
     const FvsFloatField_t direction,
     const FvsImage_t      mask
-) {
+)
+{
     FvsInt_t w      = ImageGetWidth(image);
     FvsInt_t h      = ImageGetHeight(image);
     FvsInt_t pitch  = ImageGetPitch(image);
@@ -272,13 +277,18 @@ FvsError_t MinutiaSetExtract
     int cnt = 0;
     if (m == NULL || p == NULL)
         return FvsMemory;
-    (void)MinutiaSetEmpty(minutia);
-    /* 遍历图像，提取细节点 */
+
+
+   (void)MinutiaSetEmpty(minutia);
+   //遍历图像，提取细节点
     for (y = 1; y < h - 1; y++)
-        for (x = 1; x < w - 1; x++) {
+    {
+        for (x = 1; x < w - 1; x++)
+        {
             if (m[x + y * pitchm] == 0)
                 continue;
-            if (P(x, y) == 0xFF) {
+            if (P(x, y) == 0xFF)
+            {
                 whitecount = 0;
                 if (P1 != 0) whitecount++;
                 if (P2 != 0) whitecount++;
@@ -288,27 +298,28 @@ FvsError_t MinutiaSetExtract
                 if (P6 != 0) whitecount++;
                 if (P7 != 0) whitecount++;
                 if (P8 != 0) whitecount++;
-                switch(whitecount) {
+                switch(whitecount)
+                {
                     case 0:
-                        /* 孤立点，忽略 */
+                        // 孤立点，忽略
                         break;
                     case 1:
-                        /* 检测角度 */
+                        //检测角度
                         angle = FloatFieldGetValue(direction, x, y);
                         (void)MinutiaSetAdd(minutia, (FvsFloat_t)x, (FvsFloat_t)y, FvsMinutiaTypeEnding, (FvsFloat_t)angle);
                         ++cnt;
                         break;
                     case 2:
                         break;
-                    default: {
+                    default:
                         angle = FloatFieldGetValue(direction, x, y);
                         (void)MinutiaSetAdd(minutia, (FvsFloat_t)x, (FvsFloat_t)y, FvsMinutiaTypeBranching, (FvsFloat_t)angle);
                         ++cnt;
-                    }
-                    break;
+                        break;
                 }
             }
         }
+    }
     (void)MinutiaSetCheckClean(minutia);
     fprintf(stdout, "%d\n", cnt);
     return FvsOK;

@@ -41,11 +41,13 @@ FvsError_t FvsImageImport(FvsImage_t image, const FvsString_t filename,
         ret = FvsFailure;
     if(FileRead(file, rgbq, sizeof(RGBQUAD) * 256) != sizeof(RGBQUAD) * 256)
         ret = FvsFailure;
-    if(ret == FvsFailure) {
+    if(ret == FvsFailure)
+    {
         printf("File format or Read file error");
         return ret;
     }
-    else {
+    else
+    {
         ret = ImageSetSize(image, (FvsInt_t)bmih->biWidth, (FvsInt_t)bmih->biHeight);
         if (ret == FvsOK) {
             /* »ñµÃ»º³åÇø */

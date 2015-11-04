@@ -16,7 +16,8 @@
   * 返回：错误代码
 ******************************************************************************/
 FvsError_t  FvsImageExport(const FvsImage_t image, const FvsString_t filename,
-                           FvsByte_t bmfh[14], BITMAPINFOHEADER *bmih, RGBQUAD *rgbq) {
+                           FvsByte_t bmfh[14], BITMAPINFOHEADER *bmih, RGBQUAD *rgbq)
+{
     FvsError_t ret = FvsOK;
     FvsByte_t*		buffer;
     FvsInt_t		pitch;
@@ -38,14 +39,16 @@ FvsError_t  FvsImageExport(const FvsImage_t image, const FvsString_t filename,
         printf("Write file error");
         return ret;
     }
-    else {
+    else
+    {
         /* 获得缓冲区 */
         buffer = ImageGetBuffer(image);
         pitch  = ImageGetPitch(image);
         height = ImageGetHeight(image);
         width  = ImageGetWidth(image);
         /* 拷贝数据 */
-        for (i = height - 1; i >= 0; i--) {
+        for (i = height - 1; i >= 0; i--)
+        {
             FileWrite(file, buffer + i * pitch, WIDTHBYTES(pitch * 8));
         }
     }

@@ -23,7 +23,8 @@ SOURCES += main.cpp\
     src/img_morphology.cpp \
     src/import.cpp \
     src/matching.cpp \
-    src/minutia.cpp
+    src/minutia.cpp \
+    widget1.cpp
 
 HEADERS  += widget.h \
     inc/export.h \
@@ -37,9 +38,11 @@ HEADERS  += widget.h \
     inc/img_base.h \
     inc/import.h \
     inc/matching.h \
-    inc/minutia.h
+    inc/minutia.h \
+    widget1.h
 
-FORMS    += widget.ui
+FORMS    += widget.ui \
+    widget1.ui
 
 
 INCLUDEPATH += $$PWD\inc

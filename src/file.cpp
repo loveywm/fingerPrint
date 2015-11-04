@@ -203,7 +203,8 @@ FvsError_t FileSeek(FvsFile_t file, const FvsUint_t position) {
   *       length  要读取的字节数
   * 返回：实际读取的字节数
 ******************************************************************************/
-FvsUint_t FileRead(FvsFile_t file, FvsPointer_t data, const FvsUint_t length) {
+FvsUint_t FileRead(FvsFile_t file, FvsPointer_t data, const FvsUint_t length)
+{
     iFvsFile_t* p = (iFvsFile_t*)file;
     return (FvsUint_t)fread(data, (size_t)1, (size_t)length, p->pf);
 }

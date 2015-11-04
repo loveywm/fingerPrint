@@ -17,34 +17,34 @@ typedef FvsHandle_t FvsFile_t;
 
 /* BITMAP文件头结构 */
 typedef struct tagBITMAPFILEHEADER { // bmfh 
-    FvsWord_t    bfType; 
-    FvsDword_t   bfSize; 
-    FvsWord_t    bfReserved1; 
-    FvsWord_t    bfReserved2; 
-    FvsDword_t   bfOffBits; 
+    FvsWord_t    bfType; //固定为0x4d42;
+    FvsDword_t   bfSize; //文件大小
+    FvsWord_t    bfReserved1; //保留字，不考虑
+    FvsWord_t    bfReserved2; //保留字，不考虑
+    FvsDword_t   bfOffBits; //实际位图数据的偏移字节数，即前三个部分长度之和
 } BITMAPFILEHEADER; 
 
 /* BITMAP信息头结构 */
 typedef struct tagBITMAPINFOHEADER{ // bmih 
-    FvsDword_t  biSize; 
-    FvsDword_t   biWidth;
-    FvsDword_t   biHeight;
-    FvsWord_t   biPlanes; 
-    FvsWord_t   biBitCount; 
-    FvsDword_t  biCompression; 
-    FvsDword_t  biSizeImage; 
-    FvsDword_t   biXPelsPerMeter;
-    FvsDword_t   biYPelsPerMeter;
-    FvsDword_t  biClrUsed; 
-    FvsDword_t  biClrImportant; 
+    FvsDword_t  biSize; //指定此结构体的长度，为40
+    FvsDword_t   biWidth;//位图宽
+    FvsDword_t   biHeight;//位图高
+    FvsWord_t   biPlanes; //平面数，为1
+    FvsWord_t   biBitCount; //采用颜色位数，可以是1，2，4，8，16，24，新的可以是32
+    FvsDword_t  biCompression; //压缩方式，可以是0，1，2，其中0表示不压缩
+    FvsDword_t  biSizeImage; //实际位图数据占用的字节数
+    FvsDword_t   biXPelsPerMeter;//X方向分辨率
+    FvsDword_t   biYPelsPerMeter;//Y方向分辨率
+    FvsDword_t  biClrUsed;  //使用的颜色数，如果为0，则表示默认值(2^颜色位数)
+    FvsDword_t  biClrImportant; //重要颜色数，如果为0，则表示所有颜色都是重要的
 } BITMAPINFOHEADER; 
 
 /* BITMAP调色板结构 */
 typedef struct tagRGBQUAD { // rgbq 
-    FvsByte_t    rgbBlue; 
-    FvsByte_t    rgbGreen; 
-    FvsByte_t    rgbRed; 
-    FvsByte_t    rgbReserved; 
+    FvsByte_t    rgbBlue; //该颜色的蓝色分量
+    FvsByte_t    rgbGreen; //该颜色的绿色分量
+    FvsByte_t    rgbRed;  //该颜色的红色分量
+    FvsByte_t    rgbReserved; //保留值
 } RGBQUAD; 
 
 
